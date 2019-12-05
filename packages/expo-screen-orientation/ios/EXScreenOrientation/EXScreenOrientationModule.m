@@ -177,8 +177,6 @@ UM_EXPORT_METHOD_AS(getOrientationAsync,
   return (EXScreenOrientationRegistry *)[UMModuleRegistryProvider getSingletonModuleForClass:[EXScreenOrientationRegistry class]];
 }
 
-
-
 // Will be called when this module's first listener is added.
 - (void)startObserving
 {
@@ -232,7 +230,7 @@ UM_EXPORT_METHOD_AS(getOrientationAsync,
     if (newOrientation != UIInterfaceOrientationUnknown) {
       _currentScreenOrientation = newOrientation;
       dispatch_async(dispatch_get_main_queue(), ^{
-        [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+//        [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
         // screen orientation changed so we send event (notification isn't triggered when manually changing orienatation)
         [self handleScreenOrientationChange];
         [UIViewController attemptRotationToDeviceOrientation];

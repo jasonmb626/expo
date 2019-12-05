@@ -5,10 +5,6 @@
 @interface EXScreenOrientationUtilities : NSObject
 
 + (BOOL)doesSupportOrientationMask:(UIInterfaceOrientationMask)orientationMask;
-+ (NSDictionary *)getStringToOrientationJSDict;
-+ (NSDictionary *)getOrientationJSToStringDict;
-+ (NSDictionary *)getStringToOrientationLockJSDict;
-+ (NSDictionary *)getOrientationLockJSToStringDict;
 + (EXOrientation)orientationNativeToJS:(UIInterfaceOrientationMask)orientationMask;
 + (EXOrientationLock)orientationLockNativeToJS:(UIInterfaceOrientationMask)orientationMask;
 + (UIInterfaceOrientationMask)orientationJSToNative:(EXOrientation)orientation;

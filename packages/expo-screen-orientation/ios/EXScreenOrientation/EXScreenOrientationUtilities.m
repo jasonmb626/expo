@@ -72,21 +72,6 @@ static int INVALID_MASK = 0;
   return strToOrientationDict;
 }
 
-+ (NSDictionary *)getOrientationJSToStringDict
-{
-  static NSMutableDictionary*orientationToStrDict = nil;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    orientationToStrDict = [[NSMutableDictionary alloc] init];
-    NSDictionary *strToOrientation = [EXScreenOrientationUtilities getStringToOrientationJSDict];
-    for(NSString *str in strToOrientation) {
-      NSNumber *wrappedOrientation = [strToOrientation objectForKey:str];
-      orientationToStrDict[wrappedOrientation] = str;
-    }
-  });
-  return orientationToStrDict;
-}
-
 + (NSDictionary *)getStringToOrientationLockJSDict
 {
   static NSDictionary*strToOrientationLockDict = nil;
@@ -105,21 +90,6 @@ static int INVALID_MASK = 0;
                                   };
   });
   return strToOrientationLockDict;
-}
-
-+ (NSDictionary *)getOrientationLockJSToStringDict
-{
-  static NSMutableDictionary*orientationLockToStrDict = nil;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    orientationLockToStrDict = [[NSMutableDictionary alloc] init];
-    NSDictionary *strToOrientationLock = [EXScreenOrientationUtilities getStringToOrientationLockJSDict];
-    for(NSString *str in strToOrientationLock) {
-      NSNumber *wrappedOrientationLock = [strToOrientationLock objectForKey:str];
-      orientationLockToStrDict[wrappedOrientationLock] = str;
-    }
-  });
-  return orientationLockToStrDict;
 }
 
 + (EXOrientation)orientationNativeToJS:(UIInterfaceOrientationMask)orientationMask
@@ -215,7 +185,18 @@ static int INVALID_MASK = 0;
 
 + (NSString *)orientationToString:(EXOrientation)orientation
 {
-  return [[EXScreenOrientationUtilities getOrientationJSToStringDict] objectForKey:@(orientation)];
+  static NSMutableDictionary*orientationToStrDict = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    orientationToStrDict = [[NSMutableDictionary alloc] init];
+    NSDictionary *strToOrientation = [EXScreenOrientationUtilities getStringToOrientationJSDict];
+    for(NSString *str in strToOrientation) {
+      NSNumber *wrappedOrientation = [strToOrientation objectForKey:str];
+      orientationToStrDict[wrappedOrientation] = str;
+    }
+  });
+ 
+  return [orientationToStrDict objectForKey:@(orientation)];
 }
 
 
@@ -226,7 +207,18 @@ static int INVALID_MASK = 0;
 
 + (NSString *)orientationLockToString:(EXOrientationLock)orientationLock
 {
-  return [[EXScreenOrientationUtilities getOrientationLockJSToStringDict] objectForKey:@(orientationLock)];
+  static NSMutableDictionary*orientationLockToStrDict = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    orientationLockToStrDict = [[NSMutableDictionary alloc] init];
+    NSDictionary *strToOrientationLock = [EXScreenOrientationUtilities getStringToOrientationLockJSDict];
+    for(NSString *str in strToOrientationLock) {
+      NSNumber *wrappedOrientationLock = [strToOrientationLock objectForKey:str];
+      orientationLockToStrDict[wrappedOrientationLock] = str;
+    }
+  });
+  
+  return [orientationLockToStrDict objectForKey:@(orientationLock)];
 }
 
 + (NSString *)UIInterfaceOrientationToEXOrientation:(UIInterfaceOrientation)screenOrientation
