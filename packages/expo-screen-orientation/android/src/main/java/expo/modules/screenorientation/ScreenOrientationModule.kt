@@ -91,16 +91,11 @@ class ScreenOrientationModule(context: Context) : ExportedModule(context), Lifec
   }
 
   @ExpoMethod
-  fun unlockAsync(promise: Promise) {
-    lockAsync(OrientationLock.DEFAULT.toString(), promise)
-  }
-
-  @ExpoMethod
   fun getOrientationAsync(promise: Promise) {
     mActivityProvider.currentActivity?.let {
       return try {
         val orientation = getScreenOrientation(it)
-        promise.resolve(orientation.toString()) // may not work
+        promise.resolve(orientation.toString())
       } catch (e: Exception) {
         promise.reject(ERR_SCREEN_ORIENTATION_GET_ORIENTATION, "Could not get the current screen orientation", e)
       }
@@ -212,7 +207,7 @@ class ScreenOrientationModule(context: Context) : ExportedModule(context), Lifec
       OrientationLock.LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
       OrientationLock.LANDSCAPE_LEFT -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
       OrientationLock.LANDSCAPE_RIGHT -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-      else -> throw InvalidArgumentException("OrientationLock $orientationLock is not mapped to a native Android orientation attr")
+      else -> throw InvalidArgumentException("OrientationLock $orientationLock is not mappable to a native Android orientation attr")
     }
   }
 }

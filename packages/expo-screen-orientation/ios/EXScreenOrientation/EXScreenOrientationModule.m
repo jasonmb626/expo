@@ -10,10 +10,9 @@
 
 @interface EXScreenOrientationModule ()
 
-@property (nonatomic, weak) UMModuleRegistry *moduleRegistry;
 @property (nonatomic, weak) id<UMEventEmitterService> eventEmitter;
-@property (nonatomic) bool hasListeners;
-@property (nonatomic) UIInterfaceOrientation currentScreenOrientation;
+@property (nonatomic, assign) bool hasListeners;
+@property (nonatomic, assign) UIInterfaceOrientation currentScreenOrientation;
 
 @end
 
@@ -27,11 +26,7 @@ UM_EXPORT_MODULE(ExpoScreenOrientation);
 - (instancetype)init
 {
   if ((self = [super init])) {
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleDeviceOrientationChange:)
-                                                 name:UIDeviceOrientationDidChangeNotification
-                                               object:[UIDevice currentDevice]];
+
   }
   return self;
 }
@@ -43,7 +38,6 @@ UM_EXPORT_MODULE(ExpoScreenOrientation);
 
 - (void)setModuleRegistry:(UMModuleRegistry *)moduleRegistry
 {
-  _moduleRegistry = moduleRegistry;
   _eventEmitter = [moduleRegistry getModuleImplementingProtocol:@protocol(UMEventEmitterService)];
   _hasListeners = NO;
   UIDevice *device = [UIDevice currentDevice];
@@ -91,13 +85,6 @@ UM_EXPORT_METHOD_AS(lockPlatformAsync,
   [self setOrientationMask:allowedOrientationsMask];
   [self enforceDesiredDeviceOrientationWithOrientationMask:allowedOrientationsMask];
   resolve(nil);
-}
-
-UM_EXPORT_METHOD_AS(unlockAsync,
-                 unlockAsyncWithResolver:(UMPromiseResolveBlock)resolve
-                                rejecter:(UMPromiseRejectBlock)reject)
-{
-  [self lockAsync:[EXScreenOrientationUtilities orientationLockToString:EXOrientationDefaultLock] resolver:resolve rejecter:reject];
 }
 
 UM_EXPORT_METHOD_AS(getOrientationLockAsync,
@@ -180,16 +167,23 @@ UM_EXPORT_METHOD_AS(getOrientationAsync,
 // Will be called when this module's first listener is added.
 - (void)startObserving
 {
+  if (![[UIDevice currentDevice] isGeneratingDeviceOrientationNotifications]){
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+  }
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(handleDeviceOrientationChange:)
+                                               name:UIDeviceOrientationDidChangeNotification
+                                             object:[UIDevice currentDevice]];
   _hasListeners = YES;
 }
 
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving
 {
-//  hasListeners = NO;
-//  if ([[UIDevice currentDevice] isGeneratingDeviceOrientationNotifications]){
-//    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-//  }
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+
+  _hasListeners = NO;
 }
 
 - (void)handleDeviceOrientationChange:(NSNotification *)notification
@@ -220,8 +214,6 @@ UM_EXPORT_METHOD_AS(getOrientationAsync,
   return @[@"expoDidUpdateDimensions", @"expoDidUpdatePhysicalDimensions"];
 }
 
-
-                               
 - (void)enforceDesiredDeviceOrientationWithOrientationMask:(UIInterfaceOrientationMask)orientationMask
 {
   // if current sreen orientation isn't part of the mask, we have to change orientation for default one included in mask, in order up-left-right-down

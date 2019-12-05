@@ -256,7 +256,7 @@ static int INVALID_MASK = 0;
 
 + (BOOL)doesOrientationMask:(UIInterfaceOrientationMask)orientationMask containOrientation:(UIInterfaceOrientation)orientation
 {
-  // it is how the mask is created from the orientation
+  // This is how the mask is created from the orientation
   UIInterfaceOrientationMask maskFromOrientation = (1 << orientation);
   return (maskFromOrientation & orientationMask);
 }
