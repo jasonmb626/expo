@@ -14,6 +14,8 @@ This is the log of notable changes to the Expo client that are developer-facing.
 
 ### 🐛 Bug fixes
 
+- Updated underlying Facebook SDK on Android to v5.12.0 ([#6462](https://github.com/expo/expo/pull/6462) by [@sjchmiela](https://github.com/sjchmiela))
+
 ## 36.0.0
 
 ### 📚 3rd party library updates
